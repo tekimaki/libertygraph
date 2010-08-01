@@ -1,0 +1,35 @@
+---
+package: libertygraph
+description: A developer package for creating graph relations between content objects
+copyright:
+  - {year: 2010, name: Tekimaki LLC, contact: http://tekimaki.com}
+  - {year: 2010, name: Will James, contact: will@tekimaki.com}
+license:
+  name: LGPL
+  description: Licensed under the GNU LESSER GENERAL PUBLIC LICENSE.
+  url: http://www.gnu.org/copyleft/lesser.html 
+version: 0.1
+requirements:
+	liberty: {min: 2.1.5}
+maintainer_url: http://www.tekimaki.com
+services:
+  liberty_edge:
+    class_name: LibertyEdge
+    description: A developer service for graphing relations between liberty content. Should not be invoked by just lcconfig, but integrated in any classes wanted to utilize the graphing features.
+    base_class: BitBase
+    base_package: kernel
+    type: graph_relationships
+    functions: [content_preview, content_edit, content_store, content_expunge]
+    fields:
+      head_content_id:
+        name: Head Content Reference
+        schema: {type: I4, notnull: true, primary: true}
+        validator: {type: reference, table: liberty_content, column: content_id, required: true}
+      tail_content_id:
+        name: Tail Content Reference
+        schema: {type: I4, primary: true}
+        validator: {type: reference, table: liberty_content, column: content_id}
+      weight:
+        name: Edge Weight 
+        schema: {type: I4}
+        validator: {type: int}
