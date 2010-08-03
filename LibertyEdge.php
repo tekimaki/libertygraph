@@ -64,7 +64,7 @@ class LibertyEdge extends BitBase {
 	 */
 	function store( &$pParamHash ){
 		if( $this->verify( &$pParamHash ) ) {
-			if ( !empty( $pParamHash['liberty_edge_store'] )){
+			if ( !empty( $pParamHash['liberty_edge_store'] ) && !$this->getOne( $pParamHash['liberty_edge'] ) ){
 				$table = 'liberty_edge';
 				$this->mDb->StartTrans();
 				$result = $this->mDb->associateInsert( $table, $pParamHash['liberty_edge_store'] );
@@ -122,7 +122,6 @@ class LibertyEdge extends BitBase {
 		}
 
 		$query = "DELETE FROM `liberty_edge` ".$whereSql;
-		$this->mDb->query( $query, $bindVars );
 
 		if( $this->mDb->query( $query, $bindVars ) ){
 			$ret = TRUE;
@@ -263,6 +262,38 @@ class LibertyEdge extends BitBase {
 
 	/* This section is for any helper methods you wish to create */
 	/* =-=- CUSTOM BEGIN: methods -=-= */
+
+	function getOne( &$pParamHash ){
+		$ret = FALSE;
+
+		if( !empty( $pParamHash['head_content_id'] ) && 
+			isset( $pParamHash['tail_content_id'] ) 
+		){
+			$bindVars = array();
+			$whereSql = "";
+
+			// limit results by head_content_id
+			$bindVars[] = $pParamHash['head_content_id'];
+			$whereSql .= " AND `{$fieldName}}` = ?";
+			// limit results by tail_content_id
+			if( !empty( $pParamHash['tail_content_id'] ) ){
+				$bindVars[] = $pParamHash['tail_content_id'];
+				$whereSql .= " AND `{$fieldName}}` = ?";
+			}elseif( isset( $pParamHash['tail_content_id'] ) ){
+				$whereSql .= " AND `tail_content_id` IS NULL";
+			}
+
+			$whereSql = preg_replace( '/^[\s]*AND\b/i', 'WHERE ', $whereSql );
+
+			$query = "SELECT * FROM `liberty_edge` ".$whereSql;
+
+			if( $this->mDb->getOne( $query, $bindVars ){
+				$ret = TRUE;
+			}
+		}
+
+		return $ret;
+	}
 
 	/* =-=- CUSTOM END: methods -=-= */
 
