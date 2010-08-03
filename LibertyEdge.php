@@ -58,6 +58,7 @@ class LibertyEdge extends BitBase {
 		$this->mContentId = $pContentId;
 	}
 
+
 	/**
 	 * stores a single record in the liberty_edge table
 	 */
@@ -65,23 +66,18 @@ class LibertyEdge extends BitBase {
 		if( $this->verify( &$pParamHash ) ) {
 			if ( !empty( $pParamHash['liberty_edge_store'] )){
 				$table = 'liberty_edge';
+				$this->mDb->StartTrans();
 				$result = $this->mDb->associateInsert( $table, $pParamHash['liberty_edge_store'] );
 			}
+
+			/* =-=- CUSTOM BEGIN: store -=-= */
+
+			/* =-=- CUSTOM END: store -=-= */
+
+			$this->mDb->CompleteTrans();
 		}
 	}
 
-	/**
-	 * stores multiple records in the liberty_edge table
-	 * uses bulk delete to avoid trying to store duplicate records 
-	 */
-	function storeMixed( &$pParamHash ){
-
-		$query = "DELETE FROM `liberty_edge` WHERE `content_id` = ?";
-
-		$bindVars[] = $this->mContentId;
-		$this->mDb->query( $query, $bindVars );
-		$this->store( $pParamHash );
-	}
 
 	/** 
 	 * verifies a data set for storage in the Liberty_edge table
