@@ -38,7 +38,6 @@ if( $gBitSystem->isPackageActive( 'libertygraph' ) && $gBitUser->hasPermission( 
 	$menuHash = array(
 		'package_name'  => LIBERTYGRAPH_PKG_NAME,
 		'index_url'     => LIBERTYGRAPH_PKG_URL.'index.php',
-		'menu_template' => 'bitpackage:libertygraph/menu_libertygraph.tpl',
 	);
 	$gBitSystem->registerAppMenu( $menuHash );
 
