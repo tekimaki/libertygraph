@@ -287,7 +287,7 @@ class LibertyEdge extends BitBase {
 
 			$query = "SELECT * FROM `liberty_edge` ".$whereSql;
 
-			if( $this->mDb->getOne( $query, $bindVars ){
+			if( $this->mDb->getOne( $query, $bindVars ) ){
 				$ret = TRUE;
 			}
 		}
