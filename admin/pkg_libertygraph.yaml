@@ -10,7 +10,7 @@ license:
   url: http://www.gnu.org/copyleft/lesser.html 
 version: 0.1
 requirements:
-	liberty: {min: 2.1.5}
+  liberty: {min: 2.1.5}
 maintainer_url: http://www.tekimaki.com
 services:
   liberty_edge:
