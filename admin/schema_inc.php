@@ -29,8 +29,8 @@ $tables = array(
         tail_content_id I4,
         weight I4
         CONSTRAINT '
-		, CONSTRAINT `liberty_edge_head_content_id_content_id_ref` REFERENCES `liberty_content` (`content_id`)
-		, CONSTRAINT `liberty_edge_tail_content_id_content_id_ref` REFERENCES `liberty_content` (`content_id`)
+		, CONSTRAINT `liberty_edge_head_content_id_content_id_ref` FOREIGN KEY (`head_content_id`) REFERENCES `liberty_content` (`content_id`)
+		, CONSTRAINT `liberty_edge_tail_content_id_content_id_ref` FOREIGN KEY (`tail_content_id`) REFERENCES `liberty_content` (`content_id`)
         '
     ",
 );
