@@ -39,10 +39,14 @@ class LibertyGraph extends BitBase{
 		$this->mContentId = $pContentId;
 	}
 
+	public function isValid(){
+		return( $this->verifyId( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId > 0 );
+	}
+
 	public function getGraph( $pParamHash = array() ){ 
 		// get all ancestors and children
 		$tails = $this->getTailGraph();
-		$heads = $this->getHeadGraph();
+		$heads = $this->getHeadGraphHash();
 		// not sure if this merge is how we want the data to look - might want to return a mixed array
 		return array_merge( $heads, $tails );
 	}
@@ -64,7 +68,7 @@ class LibertyGraph extends BitBase{
 						INNER JOIN `".BIT_DB_PREFIX."liberty_edge` le ON(le.`tail_content_id`=`cb_tail_content_id`) 
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_tail_content_id`) 
 						$joinSql $whereSql 
-					  ORDER BY branch, le.`weight`";
+					  ORDER BY branch, le.`weight` ASC";
 
 			$bindVars[] = $pHeadContentId;
 
@@ -91,7 +95,7 @@ class LibertyGraph extends BitBase{
 						INNER JOIN `".BIT_DB_PREFIX."liberty_edge` le ON(le.`head_content_id`=`cb_head_content_id`) 
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_head_content_id`) 
 						$joinSql $whereSql 
-					  ORDER BY branch, le.`weight`";
+					  ORDER BY branch, le.`weight` ASC";
 
 			$bindVars[] = $pTailContentId;
 
@@ -101,7 +105,42 @@ class LibertyGraph extends BitBase{
 		}
 	}
 
-	public function isValid(){
-		return( $this->verifyId( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId > 0 );
+	/**
+	 * returns a graph as a nested hash instead of a list
+	 */
+	public function getHeadGraphHash( $pTailContentId = NULL ){
+		return $this->listToHash( $this->getHeadGraph( $pTailContentId ) );
 	}
+
+	public function getTailGraphHash( $pTailContentId = NULL ){
+		return $this->listToHash( $this->getHeadGraph( $pTailContentId ) );
+	}
+
+	public function listToHash( $pGraphArray ){ 
+		$ret = array();
+		LibertyGraph::splitConnectByGraph( $ret, $pGraphArray );
+		return $ret; 
+	}
+
+    public static function splitConnectByGraph( &$pRet, $pGraphArray ) {
+        if( $pGraphArray ) {
+            foreach( array_keys( $pGraphArray ) as $conId ) {
+                $path = explode( '/', $conId );
+                LibertyGraph::recurseConnectByPath( $pRet, $pGraphArray[$conId], $path );
+            }
+        }
+    }
+
+    public static function recurseConnectByPath( &$pRet, $pGraphArray, $pPath ) {
+        $popId = array_shift( $pPath );
+        if( count( $pPath ) > 0 ) {
+            if( empty( $pRet[$popId]['children'] ) ) {
+                $pRet[$popId]['children'] = array();
+            }
+            LibertyGraph::recurseConnectByPath( $pRet[$popId]['children'], $pGraphArray, $pPath );
+        } else {
+            $pRet[$popId]['content'] = $pGraphArray;
+        }
+    }
+
 }
