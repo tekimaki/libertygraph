@@ -64,10 +64,19 @@ class LibertyEdge extends BitBase {
 	 */
 	function store( &$pParamHash ){
 		if( $this->verify( &$pParamHash ) ) {
-			if ( !empty( $pParamHash['liberty_edge_store'] ) && !$this->getOne( $pParamHash['liberty_edge'] ) ){
+			if ( !empty( $pParamHash['liberty_edge_store'] ) ){
 				$table = 'liberty_edge';
 				$this->mDb->StartTrans();
-				$result = $this->mDb->associateInsert( $table, $pParamHash['liberty_edge_store'] );
+				if( !$this->getOne( $pParamHash['liberty_edge'] ) ){
+					$result = $this->mDb->associateInsert( $table, $pParamHash['liberty_edge_store'] );
+				// custom code which generator can not anticipate
+				}else{
+					$locIds = array( 
+						'head_content_id' => $pParamHash['liberty_edge_store']['head_content_id'] 
+						'tail_content_id' => ( !empty( $pParamHash['liberty_edge_store']['tail_content_id'] ) ? $pParamHash['liberty_edge_store']['tail_content_id'] : NULL ),
+					);
+					$result = $this->mDb->associateUpdate( $table, $pParamHash['liberty_edge_store'], $locIds );
+				}
 			}
 
 			/* =-=- CUSTOM BEGIN: store -=-= */
@@ -103,12 +112,12 @@ class LibertyEdge extends BitBase {
 		// limit results by head_content_id
 		if( !empty( $pParamHash['head_content_id'] ) ){
 			$bindVars[] = $pParamHash['head_content_id'];
-			$whereSql .= " AND `{$fieldName}}` = ?";
+			$whereSql .= " AND `head_content_id` = ?";
 		}
 		// limit results by tail_content_id
 		if( !empty( $pParamHash['tail_content_id'] ) ){
 			$bindVars[] = $pParamHash['tail_content_id'];
-			$whereSql .= " AND `{$fieldName}}` = ?";
+			$whereSql .= " AND `tail_content_id` = ?";
 		}elseif( isset( $pParamHash['tail_content_id'] ) ){
 			$whereSql .= " AND `tail_content_id` IS NULL";
 		}
