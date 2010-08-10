@@ -72,7 +72,7 @@ class LibertyEdge extends BitBase {
 				// custom code which generator can not anticipate
 				}else{
 					$locIds = array( 
-						'head_content_id' => $pParamHash['liberty_edge_store']['head_content_id'] 
+						'head_content_id' => $pParamHash['liberty_edge_store']['head_content_id'], 
 						'tail_content_id' => ( !empty( $pParamHash['liberty_edge_store']['tail_content_id'] ) ? $pParamHash['liberty_edge_store']['tail_content_id'] : NULL ),
 					);
 					$result = $this->mDb->associateUpdate( $table, $pParamHash['liberty_edge_store'], $locIds );
@@ -190,7 +190,7 @@ class LibertyEdge extends BitBase {
 	/**
 	 * validateFields validates the fields in this type
 	 */
-	function validateField( &$pParamHash ) {
+	function validateFields( &$pParamHash ) {
 		$this->prepVerify();
 		if (!empty($pParamHash['liberty_edge'])) {
 			LibertyValidator::validate(
