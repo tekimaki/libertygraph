@@ -46,9 +46,17 @@ class LibertyGraph extends BitBase{
 	public function getGraph( $pParamHash = array() ){ 
 		// get all ancestors and children
 		$tails = $this->getTailGraph();
-		$heads = $this->getHeadGraphHash();
+		$heads = $this->getHeadGraph();
 		// not sure if this merge is how we want the data to look - might want to return a mixed array
 		return array_merge( $heads, $tails );
+	}
+
+	public function getGraphHash( $pParamHash = array() ){
+		// get all ancestors and children
+		$tails = $this->getTailGraphHash();
+		$heads = $this->getHeadGraphHash();
+		// @TODO merge this somehow
+		return NULL;
 	}
 
 	/**
