@@ -43,6 +43,7 @@ class LibertyGraph extends BitBase{
 		// get all ancestors and children
 		$tails = $this->getTailGraph();
 		$heads = $this->getHeadGraph();
+		// not sure if this merge is how we want the data to look - might want to return a mixed array
 		return array_merge( $heads, $tails );
 	}
 
@@ -60,13 +61,14 @@ class LibertyGraph extends BitBase{
 
 			$query = "SELECT branch AS hash_key, * $selectSql 
 					  FROM connectby('`".BIT_DB_PREFIX."liberty_edge`', '`tail_content_id`', '`head_content_id`', ?, 0, '/') AS t(cb_tail_content_id int,cb_head_content_id int, level int, branch text) 
-						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=fg.`content_id`) 
+						INNER JOIN `".BIT_DB_PREFIX."liberty_edge` le ON(le.`tail_content_id`=`cb_tail_content_id`) 
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_tail_content_id`) 
 						$joinSql $whereSql 
-					  ORDER BY branch, t.`weight`";
+					  ORDER BY branch, le.`weight`";
 
 			$bindVars[] = $pHeadContentId;
 
-			$rslt = $this->mDb->GetAssoc( $query, $bindVars )
+			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
 
 			return $rslt;
 		}
@@ -86,15 +88,20 @@ class LibertyGraph extends BitBase{
 
 			$query = "SELECT branch AS hash_key, * $selectSql 
 					  FROM connectby('`".BIT_DB_PREFIX."liberty_edge`', '`head_content_id`', '`tail_content_id`', ?, 0, '/') AS t(cb_head_content_id int,cb_tail_content_id int, level int, branch text) 
-						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=fg.`content_id`) 
+						INNER JOIN `".BIT_DB_PREFIX."liberty_edge` le ON(le.`head_content_id`=`cb_head_content_id`) 
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_head_content_id`) 
 						$joinSql $whereSql 
-					  ORDER BY branch, t.`weight`";
+					  ORDER BY branch, le.`weight`";
 
 			$bindVars[] = $pTailContentId;
 
-			$rslt = $this->mDb->GetAssoc( $query, $bindVars )
+			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
 
 			return $rslt;
 		}
+	}
+
+	public function isValid(){
+		return( $this->verifyId( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId > 0 );
 	}
 }
