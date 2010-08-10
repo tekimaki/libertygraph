@@ -122,25 +122,25 @@ class LibertyGraph extends BitBase{
 		return $ret; 
 	}
 
-    public static function splitConnectByGraph( &$pRet, $pGraphArray ) {
-        if( $pGraphArray ) {
-            foreach( array_keys( $pGraphArray ) as $conId ) {
-                $path = explode( '/', $conId );
-                LibertyGraph::recurseConnectByPath( $pRet, $pGraphArray[$conId], $path );
-            }
-        }
-    }
+	public static function splitConnectByGraph( &$pRet, $pGraphArray ) {
+		if( $pGraphArray ) {
+			foreach( array_keys( $pGraphArray ) as $conId ) {
+				$path = explode( '/', $conId );
+				LibertyGraph::recurseConnectByPath( $pRet, $pGraphArray[$conId], $path );
+			}
+		}
+	}
 
-    public static function recurseConnectByPath( &$pRet, $pGraphArray, $pPath ) {
-        $popId = array_shift( $pPath );
-        if( count( $pPath ) > 0 ) {
-            if( empty( $pRet[$popId]['children'] ) ) {
-                $pRet[$popId]['children'] = array();
-            }
-            LibertyGraph::recurseConnectByPath( $pRet[$popId]['children'], $pGraphArray, $pPath );
-        } else {
-            $pRet[$popId]['content'] = $pGraphArray;
-        }
-    }
+	public static function recurseConnectByPath( &$pRet, $pGraphArray, $pPath ) {
+		$popId = array_shift( $pPath );
+		if( count( $pPath ) > 0 ) {
+			if( empty( $pRet[$popId]['children'] ) ) {
+				$pRet[$popId]['children'] = array();
+			}
+			LibertyGraph::recurseConnectByPath( $pRet[$popId]['children'], $pGraphArray, $pPath );
+		} else {
+			$pRet[$popId]['content'] = $pGraphArray;
+		}
+	}
 
 }
