@@ -39,35 +39,62 @@ class LibertyGraph extends BitBase{
 		$this->mContentId = $pContentId;
 	}
 
-	public function getGraph( $pParamHash ){ 
-		// get all ancestors and childred
+	public function getGraph( $pParamHash = array() ){ 
+		// get all ancestors and children
+		$tails = $this->getTailGraph();
+		$heads = $this->getHeadGraph();
+		return array_merge( $heads, $tails );
 	}
 
 	/**
 	 * fetches the tail( ancestors ) of a graph starting from the content id vertice 
 	 */
-	public function getTailGraph( $pHeadContentId ){
-		// @TODO query to travel up the tree
+	public function getTailGraph( $pHeadContentId = NULL ){
+		if( $this->mDb->isAdvancedPostgresEnabled() ) {
+			$bindVars = array();
+			$selectSql = $joinSql = $whereSql = '';
+
+			if( empty( $pHeadContentId ) && $this->isValid() ){
+				$pHeadContentId = $this->mContentId;
+			}
+
+			$query = "SELECT branch AS hash_key, * $selectSql 
+					  FROM connectby('`".BIT_DB_PREFIX."liberty_edge`', '`tail_content_id`', '`head_content_id`', ?, 0, '/') AS t(cb_tail_content_id int,cb_head_content_id int, level int, branch text) 
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=fg.`content_id`) 
+						$joinSql $whereSql 
+					  ORDER BY branch, t.`weight`";
+
+			$bindVars[] = $pHeadContentId;
+
+			$rslt = $this->mDb->GetAssoc( $query, $bindVars )
+
+			return $rslt;
+		}
 	}
 
 	/**
 	 * fetches the head( children or subtree ) of a graph starting from the content id vertice 
 	 */
-	public function getHeadGraph( $pTailContentId ){
-		$bindVars = array();
-		$selectSql = $joinSql = $whereSql = '';
-
+	public function getHeadGraph( $pTailContentId = NULL ){
 		if( $this->mDb->isAdvancedPostgresEnabled() ) {
+			$bindVars = array();
+			$selectSql = $joinSql = $whereSql = '';
+
+			if( empty( $pTailContentId ) && $this->isValid() ){
+				$pTailContentId = $this->mContentId;
+			}
 
 			$query = "SELECT branch AS hash_key, * $selectSql 
 					  FROM connectby('`".BIT_DB_PREFIX."liberty_edge`', '`head_content_id`', '`tail_content_id`', ?, 0, '/') AS t(cb_head_content_id int,cb_tail_content_id int, level int, branch text) 
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=fg.`content_id`) 
-						$joinSql
+						$joinSql $whereSql 
 					  ORDER BY branch, t.`weight`";
 
-			$bindVars[] = $this->mContentId;
+			$bindVars[] = $pTailContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars )
+
+			return $rslt;
 		}
 	}
 }
