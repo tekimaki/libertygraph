@@ -81,6 +81,7 @@ class LibertyGraph extends BitBase{
 			$bindVars[] = $pHeadContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
+			vd( $rslt );
 
 			return $rslt;
 		}
@@ -108,6 +109,7 @@ class LibertyGraph extends BitBase{
 			$bindVars[] = $pTailContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
+			vd( $rslt );
 
 			return $rslt;
 		}
@@ -121,7 +123,7 @@ class LibertyGraph extends BitBase{
 	}
 
 	public function getTailGraphHash( $pTailContentId = NULL ){
-		return $this->listToHash( $this->getHeadGraph( $pTailContentId ) );
+		return $this->listToHash( $this->getTailGraph( $pTailContentId ) );
 	}
 
 	public function listToHash( $pGraphArray ){ 
