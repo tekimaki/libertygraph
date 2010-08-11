@@ -142,10 +142,10 @@ class LibertyGraph extends BitBase{
 	public static function recurseConnectByPath( &$pRet, $pGraphArray, $pPath ) {
 		$popId = array_shift( $pPath );
 		if( count( $pPath ) > 0 ) {
-			if( empty( $pRet[$popId]['children'] ) ) {
-				$pRet[$popId]['children'] = array();
+			if( empty( $pRet[$popId]['nodes'] ) ) {
+				$pRet[$popId]['nodes'] = array();
 			}
-			LibertyGraph::recurseConnectByPath( $pRet[$popId]['children'], $pGraphArray, $pPath );
+			LibertyGraph::recurseConnectByPath( $pRet[$popId]['nodes'], $pGraphArray, $pPath );
 		} else {
 			$pRet[$popId]['content'] = $pGraphArray;
 		}
