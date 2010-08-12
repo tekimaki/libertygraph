@@ -151,4 +151,9 @@ class LibertyGraph extends BitBase{
 		}
 	}
 
+	public function setContentId( $pContentId ){
+		if( $this->verifyId( $pContentId ) ){
+			$this->mContentId = $pContentId;
+		}
+	}
 }
