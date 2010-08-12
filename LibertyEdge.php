@@ -299,11 +299,11 @@ class LibertyEdge extends BitBase {
 
 			// limit results by head_content_id
 			$bindVars[] = $pParamHash['head_content_id'];
-			$whereSql .= " AND `{$fieldName}}` = ?";
+			$whereSql .= " AND `head_content_id` = ?";
 			// limit results by tail_content_id
 			if( !empty( $pParamHash['tail_content_id'] ) ){
 				$bindVars[] = $pParamHash['tail_content_id'];
-				$whereSql .= " AND `{$fieldName}}` = ?";
+				$whereSql .= " AND `tail_content_id` = ?";
 			}elseif( isset( $pParamHash['tail_content_id'] ) ){
 				$whereSql .= " AND `tail_content_id` IS NULL";
 			}
