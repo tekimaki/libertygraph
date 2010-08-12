@@ -103,7 +103,7 @@ class LibertyEdge extends BitBase {
 		return( count( $this->mErrors )== 0 );
 	}
 
-	function expunge( &$pParamHash ){
+	function expunge( &$pParamHash=array() ){
 		$ret = FALSE;
 		$this->mDb->StartTrans();
 		$bindVars = array();
@@ -123,6 +123,14 @@ class LibertyEdge extends BitBase {
 		}
 
 		/* =-=- CUSTOM BEGIN: expunge -=-= */
+
+		if( empty( $whereSql ) && $this->isValid() ) {
+			// @TODO a more sophisticated implementation here might have an option to 
+			// replate all tail values with the head's own tail value - to collapse related nodes
+			$bindVars[] = $this->mContentId;
+			$bindVars[] = $this->mContentId;
+			$whereSql .= " AND `head_content_id` = ? OR `tail_content_id` = ?";
+		}
 
 		/* =-=- CUSTOM END: expunge -=-= */
 
@@ -266,6 +274,14 @@ class LibertyEdge extends BitBase {
 	}
 
 
+    /**
+     * Check mContentId to establish if the object has been loaded with a valid record
+     */
+    function isValid() {
+        return( BitBase::verifyId( $this->mContentId ) );
+    }
+
+
 	// {{{ =================== Custom Helper Mthods  ====================
 
 
@@ -332,7 +348,7 @@ function liberty_edge_content_store( $pObject, $pParamHash ){
 		}
 	}
 }
-function liberty_edge_content_expunge( $pObject, $pParamHash ){
+function liberty_edge_content_expunge( $pObject ){
 	if( $pObject->hasService( LIBERTY_SERVICE_LIBERTY_EDGE ) ){
 		$liberty_edge = new LibertyEdge( $pObject->mContentId ); 
 		if( !$liberty_edge->expunge() ){
