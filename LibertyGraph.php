@@ -81,7 +81,6 @@ class LibertyGraph extends BitBase{
 			$bindVars[] = $pHeadContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
-			vd( $rslt );
 
 			return $rslt;
 		}
@@ -109,7 +108,6 @@ class LibertyGraph extends BitBase{
 			$bindVars[] = $pTailContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
-			vd( $rslt );
 
 			return $rslt;
 		}
