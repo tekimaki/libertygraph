@@ -43,18 +43,18 @@ class LibertyGraph extends BitBase{
 		return( $this->verifyId( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId > 0 );
 	}
 
-	public function getGraph( $pParamHash = array() ){ 
+	public function getGraph( &$pParamHash = array() ){ 
 		// get all ancestors and children
-		$tails = $this->getTailGraph();
-		$heads = $this->getHeadGraph();
+		$tails = $this->getTailGraph( $pParamHash );
+		$heads = $this->getHeadGraph( $pParamHash );
 		// not sure if this merge is how we want the data to look - might want to return a mixed array
 		return array_merge( $heads, $tails );
 	}
 
-	public function getGraphHash( $pParamHash = array() ){
+	public function getGraphHash( &$pParamHash = array() ){
 		// get all ancestors and children
-		$tails = $this->getTailGraphHash();
-		$heads = $this->getHeadGraphHash();
+		$tails = $this->getTailGraphHash( $pParamHash );
+		$heads = $this->getHeadGraphHash( $pParamHash );
 		// @TODO merge this somehow
 		return NULL;
 	}
@@ -62,13 +62,19 @@ class LibertyGraph extends BitBase{
 	/**
 	 * fetches the tail( ancestors ) of a graph starting from the content id vertice 
 	 */
-	public function getTailGraph( $pHeadContentId = NULL ){
+	public function getTailGraph( &$pParamHash = array() ){
 		if( $this->mDb->isAdvancedPostgresEnabled() ) {
 			$bindVars = array();
 			$selectSql = $joinSql = $whereSql = '';
 
-			if( empty( $pHeadContentId ) && $this->isValid() ){
-				$pHeadContentId = $this->mContentId;
+			// set head content id
+			$headContentId = !empty($pParamHash['head_content_id'])?$pParamHash['head_content_id']:( $this->isValid()?$this->mContentId:NULL );
+			$bindVars[] = $headContentId;
+
+			// limit by content type 
+			if( !empty( $pParamHash['content_type_guid'] ) ){
+				$whereSql .= " WHERE lc.`content_type_guid` = ?";
+				$bindVars[] = $pParamHash['content_type_guid'];
 			}
 
 			$query = "SELECT branch AS hash_key, * $selectSql 
@@ -77,8 +83,6 @@ class LibertyGraph extends BitBase{
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_tail_content_id`) 
 						$joinSql $whereSql 
 					  ORDER BY branch, le.`weight` ASC";
-
-			$bindVars[] = $pHeadContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
 
@@ -89,13 +93,19 @@ class LibertyGraph extends BitBase{
 	/**
 	 * fetches the head( children or subtree ) of a graph starting from the content id vertice 
 	 */
-	public function getHeadGraph( $pTailContentId = NULL ){
+	public function getHeadGraph( &$pParamHash = array() ){
 		if( $this->mDb->isAdvancedPostgresEnabled() ) {
 			$bindVars = array();
 			$selectSql = $joinSql = $whereSql = '';
 
-			if( empty( $pTailContentId ) && $this->isValid() ){
-				$pTailContentId = $this->mContentId;
+			// set tail content id
+			$tailContentId = !empty($pParamHash['tail_content_id'])?$pParamHash['tail_content_id']:( $this->isValid()?$this->mContentId:NULL );
+			$bindVars[] = $tailContentId;
+
+			// limit by content type 
+			if( !empty( $pParamHash['content_type_guid'] ) ){
+				$whereSql .= " WHERE lc.`content_type_guid` = ?";
+				$bindVars[] = $pParamHash['content_type_guid'];
 			}
 
 			$query = "SELECT branch AS hash_key, * $selectSql 
@@ -104,8 +114,6 @@ class LibertyGraph extends BitBase{
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_head_content_id`) 
 						$joinSql $whereSql 
 					  ORDER BY branch, le.`weight` ASC";
-
-			$bindVars[] = $pTailContentId;
 
 			$rslt = $this->mDb->GetAssoc( $query, $bindVars );
 
@@ -116,12 +124,12 @@ class LibertyGraph extends BitBase{
 	/**
 	 * returns a graph as a nested hash instead of a list
 	 */
-	public function getHeadGraphHash( $pTailContentId = NULL ){
-		return $this->listToHash( $this->getHeadGraph( $pTailContentId ) );
+	public function getHeadGraphHash( &$pParamHash = array() ){
+		return $this->listToHash( $this->getHeadGraph( $pParamHash ) );
 	}
 
-	public function getTailGraphHash( $pTailContentId = NULL ){
-		return $this->listToHash( $this->getTailGraph( $pTailContentId ) );
+	public function getTailGraphHash( &$pParamHash = array() ){
+		return $this->listToHash( $this->getTailGraph( $pParamHash ) );
 	}
 
 	public function listToHash( $pGraphArray ){ 
