@@ -291,8 +291,7 @@ class LibertyEdge extends BitBase {
 	function getOne( &$pParamHash ){
 		$ret = FALSE;
 
-		if( !empty( $pParamHash['head_content_id'] ) && 
-			isset( $pParamHash['tail_content_id'] ) 
+		if( !empty( $pParamHash['head_content_id'] ) 
 		){
 			$bindVars = array();
 			$whereSql = "";
@@ -304,7 +303,7 @@ class LibertyEdge extends BitBase {
 			if( !empty( $pParamHash['tail_content_id'] ) ){
 				$bindVars[] = $pParamHash['tail_content_id'];
 				$whereSql .= " AND `tail_content_id` = ?";
-			}elseif( isset( $pParamHash['tail_content_id'] ) ){
+			}else{
 				$whereSql .= " AND `tail_content_id` IS NULL";
 			}
 
