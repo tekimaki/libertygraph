@@ -41,6 +41,7 @@ if( $gBitSystem->isPackageActive( 'libertygraph' ) && $gBitUser->hasPermission( 
 	);
 	$gBitSystem->registerAppMenu( $menuHash );
 
+	/*
     $gLibertySystem->registerService(
 		LIBERTY_SERVICE_LIBERTY_EDGE,
 		LIBERTYGRAPH_PKG_NAME,
@@ -54,5 +55,6 @@ if( $gBitSystem->isPackageActive( 'libertygraph' ) && $gBitUser->hasPermission( 
 			'description' => 'A developer service for graphing relations between liberty content. Should not be invoked by just lcconfig, but integrated in any classes wanted to utilize the graphing features.'
         )
     );
+	*/
 
 }
