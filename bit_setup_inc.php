@@ -42,19 +42,24 @@ if( $gBitSystem->isPackageActive( 'libertygraph' ) && $gBitUser->hasPermission( 
 	$gBitSystem->registerAppMenu( $menuHash );
 
 	/*
+    // include service functions
+	require_once( LIBERTYGRAPH_PKG_PATH.'LibertyEdge.php' );
+
     $gLibertySystem->registerService(
 		LIBERTY_SERVICE_LIBERTY_EDGE,
 		LIBERTYGRAPH_PKG_NAME,
         array(
+			'content_display_function' => 'liberty_edge_content_display',
 			'content_preview_function' => 'liberty_edge_content_preview',
 			'content_edit_function' => 'liberty_edge_content_edit',
 			'content_store_function' => 'liberty_edge_content_store',
 			'content_expunge_function' => 'liberty_edge_content_expunge',
+			'content_list_sql_function' => 'liberty_edge_content_list_sql',
         ),
         array(
 			'description' => 'A developer service for graphing relations between liberty content. Should not be invoked by just lcconfig, but integrated in any classes wanted to utilize the graphing features.'
         )
     );
-	*/
+	 */
 
 }

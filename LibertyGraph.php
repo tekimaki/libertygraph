@@ -95,8 +95,10 @@ class LibertyGraph extends BitBase{
 	 */
 	public function getHeadGraph( &$pParamHash = array() ){
 		if( $this->mDb->isAdvancedPostgresEnabled() ) {
+			$rslt = NULL;
 			$bindVars = array();
 			$selectSql = $joinSql = $whereSql = '';
+			$assocKey = !empty( $pParamHash['assoc_key'] )?$pParamHash['assoc_key']:'branch';
 
 			// set tail content id
 			$tailContentId = !empty($pParamHash['tail_content_id'])?$pParamHash['tail_content_id']:( $this->isValid()?$this->mContentId:NULL );
@@ -108,7 +110,7 @@ class LibertyGraph extends BitBase{
 				$bindVars[] = $pParamHash['content_type_guid'];
 			}
 
-			$query = "SELECT branch AS hash_key, * $selectSql 
+			$query = "SELECT $assocKey AS hash_key, * $selectSql 
 					  FROM connectby('`".BIT_DB_PREFIX."liberty_edge`', '`head_content_id`', '`tail_content_id`', ?, 0, '/') AS t(cb_head_content_id int,cb_tail_content_id int, level int, branch text) 
 						INNER JOIN `".BIT_DB_PREFIX."liberty_edge` le ON(le.`head_content_id`=`cb_head_content_id`) 
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lc.`content_id`=`cb_head_content_id`) 

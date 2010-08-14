@@ -19,7 +19,7 @@ services:
     base_class: BitBase
     base_package: kernel
     type: graph_relationships
-    functions: [content_preview, content_edit, content_store, content_expunge]
+    functions: [content_display, content_preview, content_edit, content_store, content_expunge, content_list_sql]
     fields:
       head_content_id:
         name: Head Content Reference

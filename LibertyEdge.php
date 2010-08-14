@@ -64,19 +64,10 @@ class LibertyEdge extends BitBase {
 	 */
 	function store( &$pParamHash ){
 		if( $this->verify( &$pParamHash ) ) {
-			if ( !empty( $pParamHash['liberty_edge_store'] ) ){
+			if ( !empty( $pParamHash['liberty_edge_store'] ) && !$this->getOne( $pParamHash['liberty_edge'] ) ){
 				$table = 'liberty_edge';
 				$this->mDb->StartTrans();
-				if( !$this->getOne( $pParamHash['liberty_edge'] ) ){
-					$result = $this->mDb->associateInsert( $table, $pParamHash['liberty_edge_store'] );
-				// custom code which generator can not anticipate
-				}else{
-					$locIds = array( 
-						'head_content_id' => $pParamHash['liberty_edge_store']['head_content_id'], 
-						'tail_content_id' => ( !empty( $pParamHash['liberty_edge_store']['tail_content_id'] ) ? $pParamHash['liberty_edge_store']['tail_content_id'] : NULL ),
-					);
-					$result = $this->mDb->associateUpdate( $table, $pParamHash['liberty_edge_store'], $locIds );
-				}
+				$result = $this->mDb->associateInsert( $table, $pParamHash['liberty_edge_store'] );
 			}
 
 			/* =-=- CUSTOM BEGIN: store -=-= */
@@ -103,7 +94,7 @@ class LibertyEdge extends BitBase {
 		return( count( $this->mErrors )== 0 );
 	}
 
-	function expunge( &$pParamHash=array() ){
+	function expunge( &$pParamHash = array() ){
 		$ret = FALSE;
 		$this->mDb->StartTrans();
 		$bindVars = array();
@@ -282,6 +273,7 @@ class LibertyEdge extends BitBase {
     }
 
 
+
 	// {{{ =================== Custom Helper Mthods  ====================
 
 
@@ -327,6 +319,15 @@ class LibertyEdge extends BitBase {
 
 }
 
+function liberty_edge_content_display( $pObject, $pParamHash ){
+	if( $pObject->hasService( LIBERTY_SERVICE_LIBERTY_EDGE ) ){
+		if( $pObject->isValid() ) {
+			$liberty_edge = new LibertyEdge(); 
+			$listHash = array( 'content_id' => $pObject->mContentId );
+			$pObject->mInfo['liberty_edge'] = $liberty_edge->getList( $listHash );
+		}
+	}
+}
 function liberty_edge_content_preview( $pObject, $pParamHash ){
 	if( $pObject->hasService( LIBERTY_SERVICE_LIBERTY_EDGE ) ){
 		$liberty_edge = new LibertyEdge(); 
@@ -347,11 +348,21 @@ function liberty_edge_content_store( $pObject, $pParamHash ){
 		}
 	}
 }
-function liberty_edge_content_expunge( $pObject ){
+function liberty_edge_content_expunge( $pObject, $pParamHash ){
 	if( $pObject->hasService( LIBERTY_SERVICE_LIBERTY_EDGE ) ){
 		$liberty_edge = new LibertyEdge( $pObject->mContentId ); 
 		if( !$liberty_edge->expunge() ){
 			$pObject->setError( 'liberty_edge', $liberty_edge->mErrors );
 		}
+	}
+}
+function liberty_edge_content_list_sql( $pObject, $pParamHash ){
+	if( $pObject->hasService( LIBERTY_SERVICE_LIBERTY_EDGE ) ){
+		global $gBitSystem;
+		$ret = array();
+		$ret['select_sql'] = " ,liberty_edge.`head_content_id`,liberty_edge.`tail_content_id`,liberty_edge.`weight`";
+		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."liberty_edge` liberty_edge ON ( lc.`content_id`=liberty_edge.`content_id` )";
+		$ret['where_sql'] = "";
+		return $ret;
 	}
 }
