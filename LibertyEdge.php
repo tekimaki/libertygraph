@@ -63,7 +63,7 @@ class LibertyEdge extends BitBase {
 	 * stores a single record in the liberty_edge table
 	 */
 	function store( &$pParamHash ){
-		if( $this->verify( &$pParamHash ) ) {
+		if( $this->verify( $pParamHash ) ) {
 			if ( !empty( $pParamHash['liberty_edge_store'] ) && !$this->getOne( $pParamHash['liberty_edge'] ) ){
 				$table = 'liberty_edge';
 				$this->mDb->StartTrans();
