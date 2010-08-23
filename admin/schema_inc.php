@@ -22,6 +22,21 @@
    -==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
+global $gBitSystem;
+
+$gBitSystem->registerPackageInfo( LIBERTYGRAPH_PKG_NAME, array(
+	'description' => "A developer package for creating graph relations between content objects",
+	'license' => '<a href="http://www.gnu.org/copyleft/lesser.html">LGPL</a>',));
+
+// Requirements
+$gBitSystem->registerRequirements( LIBERTYGRAPH_PKG_NAME, array(
+	'liberty' => array( 'min' => '2.1.5', ),
+));
+
+
+// Install process
+global $gBitInstaller;
+if( is_object( $gBitInstaller ) ){
 
 $tables = array(
     'liberty_edge' => "
@@ -35,15 +50,9 @@ $tables = array(
     ",
 );
 
-global $gBitInstaller;
-
 foreach( array_keys( $tables ) AS $tableName ) {
 	$gBitInstaller->registerSchemaTable( LIBERTYGRAPH_PKG_NAME, $tableName, $tables[$tableName] );
 }
-
-$gBitInstaller->registerPackageInfo( LIBERTYGRAPH_PKG_NAME, array(
-	'description' => "A developer package for creating graph relations between content objects",
-	'license' => '<a href="http://www.gnu.org/copyleft/lesser.html">LGPL</a>',));
 
 // $indices = array();
 // $gBitInstaller->registerSchemaIndexes( LIBERTYGRAPH_PKG_NAME, $indices );
@@ -70,8 +79,4 @@ $gBitInstaller->registerUserPermissions( LIBERTYGRAPH_PKG_NAME, array(
 $gBitInstaller->registerPreferences( LIBERTYGRAPH_PKG_NAME, array(
 ));
 
-// Requirements
-$gBitInstaller->registerRequirements( LIBERTYGRAPH_PKG_NAME, array(
-	'liberty' => array( 'min' => '2.1.5', ),
-
-));
+}
