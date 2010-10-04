@@ -1,0 +1,32 @@
+---
+libertygraph: 
+  homeable: false
+  required: false
+  tables: 
+    liberty_edge: |
+      
+      head_content_id I4 NOTNULL,
+      tail_content_id I4,
+      weight I4
+      CONSTRAINT '
+      , CONSTRAINT `liberty_edge_head_content_id_content_id_ref` FOREIGN KEY (`head_content_id`) REFERENCES `liberty_content` (`content_id`)
+      , CONSTRAINT `liberty_edge_tail_content_id_content_id_ref` FOREIGN KEY (`tail_content_id`) REFERENCES `liberty_content` (`content_id`)
+      '
+      
+  sequences: [ ]
+  permissions: 
+    p_libertygraph_admin: 
+      description: Can admin the libertygraph package
+      level: admin
+    p_libertygraph_view: 
+      description: Can view the libertygraph package
+      level: admin
+  requirements: 
+    liberty: 
+      min: 2.1.5
+  version: 0.0.0
+  description: >
+    A developer package for creating graph
+    relations between content objects
+  license: 
+    html: '<a href="http://www.gnu.org/copyleft/lesser.html">LGPL</a>'
