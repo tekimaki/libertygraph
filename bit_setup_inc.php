@@ -34,7 +34,7 @@ $registerHash = array(
 $gBitSystem->registerPackage( $registerHash );
 
 // If package is active and the user has view auth then register the package menu
-if( $gBitSystem->isPackageActive( 'libertygraph' ) && $gBitUser->hasPermission( 'p_libertygraph_view' ) ) {
+if( $gBitSystem->isPackageActive( 'libertygraph' ) ){ // && $gBitUser->hasPermission( 'p_libertygraph_view' ) ) {
 	$menuHash = array(
 		'package_name'  => LIBERTYGRAPH_PKG_NAME,
 		'index_url'     => LIBERTYGRAPH_PKG_URL.'index.php',

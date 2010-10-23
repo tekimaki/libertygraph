@@ -23,10 +23,25 @@ libertygraph:
       level: admin
   requirements: 
     liberty: 
-      min: 2.1.5
-  version: 0.0.0
+      min: 2.1.7
+  version: 0.0.1
   description: >
     A developer package for creating graph
     relations between content objects
   license: 
-    html: '<a href="http://www.gnu.org/copyleft/lesser.html">LGPL</a>'
+    name: LGPL
+    description: Licensed under the GNU LESSER GENERAL PUBLIC LICENSE.
+    url: http://www.gnu.org/copyleft/lesser.html
+  plugin:
+    graph_relationships:
+      handler_file: LibertyEdge.php 
+      required: false
+      description: A developer service for graphing relations between liberty content. Should not be invoked by just lcconfig, but integrated in any classes wanted to utilize the graphing features.
+      api_handlers:
+        function:
+          content_display_function: liberty_edge_content_display
+          content_preview_function: liberty_edge_content_preview
+          content_edit_function: liberty_edge_content_edit
+          content_store_function: liberty_edge_content_store
+          content_expunge_function: liberty_edge_content_expunge
+          content_list_sql_function: liberty_edge_content_list_sql
