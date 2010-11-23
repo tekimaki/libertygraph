@@ -157,7 +157,7 @@ class LibertyEdge extends BitBase {
 
 		/* =-=- CUSTOM BEGIN: getList -=-= */
 
-		if( $this->isValid() ) {
+		if( $this->isValid() && empty( $pParamHash['tail_content_id'] ) ) {
 			$bindVars[] = $this->mContentId;
 			$whereSql .= " AND `tail_content_id` = ?";
 		}
