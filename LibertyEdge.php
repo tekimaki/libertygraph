@@ -125,14 +125,15 @@ class LibertyEdge extends BitBase {
 
 		/* =-=- CUSTOM END: expunge -=-= */
 
+		// some sort of limit must be imposed to execute the expunge - nuking the whole table shall not be allowed
 		if( !empty( $whereSql ) ){
 			$whereSql = preg_replace( '/^[\s]*AND\b/i', 'WHERE ', $whereSql );
-		}
 
-		$query = "DELETE FROM `liberty_edge` ".$whereSql;
+			$query = "DELETE FROM `liberty_edge` ".$whereSql;
 
-		if( $this->mDb->query( $query, $bindVars ) ){
-			$ret = TRUE;
+			if( $this->mDb->query( $query, $bindVars ) ){
+				$ret = TRUE;
+			}
 		}
 
 		$this->mDb->CompleteTrans();
